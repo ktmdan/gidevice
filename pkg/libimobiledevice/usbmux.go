@@ -5,17 +5,18 @@ import (
 	"crypto/tls"
 	"encoding/binary"
 	"fmt"
-	"howett.net/plist"
 	"net"
 	"runtime"
 	"strconv"
 	"time"
+
+	"howett.net/plist"
 )
 
 var DefaultDeadlineTimeout = 30 * time.Second
 
 const (
-	BundleID         = "electricbubble.libimobiledevice"
+	BundleID         = "ktmdan.libimobiledevice"
 	ProgramName      = "libimobiledevice"
 	ClientVersion    = "libimobiledevice-beta"
 	LibUSBMuxVersion = 3

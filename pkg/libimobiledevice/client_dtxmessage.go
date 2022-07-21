@@ -13,7 +13,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/electricbubble/gidevice/pkg/nskeyedarchiver"
+	"github.com/ktmdan/gidevice/pkg/nskeyedarchiver"
 )
 
 const (
@@ -182,7 +182,7 @@ func (c *dtxMessageClient) ReceiveDTXMessage() (result *DTXMessageResult, err er
 
 	var aux, obj []byte
 
-	// see https://github.com/electricbubble/gidevice/issues/28
+	// see https://github.com/ktmdan/gidevice/issues/28
 	if r, l := payloadSize+payload.AuxiliaryLength, len(rawPayload); int(r) <= l {
 		aux = rawPayload[payloadSize:r]
 	} else {

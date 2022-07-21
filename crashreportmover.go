@@ -2,13 +2,15 @@ package giDevice
 
 import (
 	"fmt"
-	"github.com/electricbubble/gidevice/pkg/libimobiledevice"
-	"howett.net/plist"
 	"io"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+
+	"howett.net/plist"
+
+	"github.com/ktmdan/gidevice/pkg/libimobiledevice"
 )
 
 var _ CrashReportMover = (*crashReportMover)(nil)

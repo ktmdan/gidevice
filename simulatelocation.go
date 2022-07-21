@@ -1,6 +1,6 @@
 package giDevice
 
-import "github.com/electricbubble/gidevice/pkg/libimobiledevice"
+import "github.com/ktmdan/gidevice/pkg/libimobiledevice"
 
 var _ SimulateLocation = (*simulateLocation)(nil)
 

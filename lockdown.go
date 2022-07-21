@@ -14,8 +14,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/electricbubble/gidevice/pkg/libimobiledevice"
 	uuid "github.com/satori/go.uuid"
+
+	"github.com/ktmdan/gidevice/pkg/libimobiledevice"
 )
 
 var _ Lockdown = (*lockdown)(nil)
@@ -659,10 +660,12 @@ func encodePairPemFormat(cert []byte, key *rsa.PrivateKey) ([]byte, []byte, erro
 	}
 
 	buf := new(bytes.Buffer)
-	if err := pem.Encode(buf, &pem.Block{
-		Type:  "RSA PRIVATE KEY",
-		Bytes: x509.MarshalPKCS1PrivateKey(key),
-	}); err != nil {
+	if err := pem.Encode(
+		buf, &pem.Block{
+			Type:  "RSA PRIVATE KEY",
+			Bytes: x509.MarshalPKCS1PrivateKey(key),
+		},
+	); err != nil {
 		return nil, nil, err
 	}
 
@@ -673,10 +676,12 @@ func encodePairPemFormat(cert []byte, key *rsa.PrivateKey) ([]byte, []byte, erro
 
 func encodePemCertificate(cert []byte) ([]byte, error) {
 	buf := new(bytes.Buffer)
-	if err := pem.Encode(buf, &pem.Block{
-		Type:  "CERTIFICATE",
-		Bytes: cert,
-	}); err != nil {
+	if err := pem.Encode(
+		buf, &pem.Block{
+			Type:  "CERTIFICATE",
+			Bytes: cert,
+		},
+	); err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil

@@ -3,7 +3,8 @@ package giDevice
 import (
 	"bytes"
 	"fmt"
-	"github.com/electricbubble/gidevice/pkg/libimobiledevice"
+
+	"github.com/ktmdan/gidevice/pkg/libimobiledevice"
 )
 
 func newSpringBoard(client *libimobiledevice.SpringBoardClient) *springboard {

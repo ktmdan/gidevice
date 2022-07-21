@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/electricbubble/gidevice/pkg/libimobiledevice"
+
+	"github.com/ktmdan/gidevice/pkg/libimobiledevice"
 )
 
 var _ Screenshot = (*screenshot)(nil)

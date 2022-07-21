@@ -3,7 +3,8 @@ package giDevice
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/electricbubble/gidevice/pkg/libimobiledevice"
+
+	"github.com/ktmdan/gidevice/pkg/libimobiledevice"
 )
 
 var _ Instruments = (*instruments)(nil)

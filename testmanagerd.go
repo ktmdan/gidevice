@@ -1,7 +1,7 @@
 package giDevice
 
 import (
-	"github.com/electricbubble/gidevice/pkg/libimobiledevice"
+	"github.com/ktmdan/gidevice/pkg/libimobiledevice"
 )
 
 var _ Testmanagerd = (*testmanagerd)(nil)

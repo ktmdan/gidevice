@@ -1,9 +1,10 @@
 package giDevice
 
 import (
-	"github.com/electricbubble/gidevice/pkg/libimobiledevice"
 	"testing"
 	"time"
+
+	"github.com/ktmdan/gidevice/pkg/libimobiledevice"
 )
 
 var um Usbmux

@@ -10,11 +10,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/electricbubble/gidevice/pkg/ipa"
-	"github.com/electricbubble/gidevice/pkg/libimobiledevice"
-	"github.com/electricbubble/gidevice/pkg/nskeyedarchiver"
 	uuid "github.com/satori/go.uuid"
 	"howett.net/plist"
+
+	"github.com/ktmdan/gidevice/pkg/ipa"
+	"github.com/ktmdan/gidevice/pkg/libimobiledevice"
+	"github.com/ktmdan/gidevice/pkg/nskeyedarchiver"
 )
 
 const LockdownPort = 62078
@@ -633,29 +634,33 @@ func (d *device) XCTest(bundleID string, opts ...XCTestOption) (out <-chan strin
 		return _out, cancelFunc, err
 	}
 
-	xcTestManager2.registerCallback("_XCT_logDebugMessage:", func(m libimobiledevice.DTXMessageResult) {
-		// more information ( each operation )
-		// fmt.Println("###### xcTestManager2 ### -->", m)
-		if strings.Contains(fmt.Sprintf("%s", m), "Received test runner ready reply with error: (null)") {
-			// fmt.Println("###### xcTestManager2 ### -->", fmt.Sprintf("%v", m.Aux[0]))
-			time.Sleep(time.Second)
-			if err = xcTestManager2.startExecutingTestPlan(xcodeVersion); err != nil {
-				debugLog(fmt.Sprintf("startExecutingTestPlan %d: %s", xcodeVersion, err))
-				return
+	xcTestManager2.registerCallback(
+		"_XCT_logDebugMessage:", func(m libimobiledevice.DTXMessageResult) {
+			// more information ( each operation )
+			// fmt.Println("###### xcTestManager2 ### -->", m)
+			if strings.Contains(fmt.Sprintf("%s", m), "Received test runner ready reply with error: (null)") {
+				// fmt.Println("###### xcTestManager2 ### -->", fmt.Sprintf("%v", m.Aux[0]))
+				time.Sleep(time.Second)
+				if err = xcTestManager2.startExecutingTestPlan(xcodeVersion); err != nil {
+					debugLog(fmt.Sprintf("startExecutingTestPlan %d: %s", xcodeVersion, err))
+					return
+				}
 			}
-		}
-	})
-	xcTestManager2.registerCallback("_Golang-iDevice_Unregistered", func(m libimobiledevice.DTXMessageResult) {
-		// more information
-		//  _XCT_testRunnerReadyWithCapabilities:
-		//  _XCT_didBeginExecutingTestPlan
-		//  _XCT_didBeginInitializingForUITesting
-		//  _XCT_testSuite:didStartAt:
-		//  _XCT_testCase:method:willStartActivity:
-		//  _XCT_testCase:method:didFinishActivity:
-		//  _XCT_testCaseDidStartForTestClass:method:
-		// fmt.Println("###### xcTestManager2 ### _Unregistered -->", m)
-	})
+		},
+	)
+	xcTestManager2.registerCallback(
+		"_Golang-iDevice_Unregistered", func(m libimobiledevice.DTXMessageResult) {
+			// more information
+			//  _XCT_testRunnerReadyWithCapabilities:
+			//  _XCT_didBeginExecutingTestPlan
+			//  _XCT_didBeginInitializingForUITesting
+			//  _XCT_testSuite:didStartAt:
+			//  _XCT_testCase:method:willStartActivity:
+			//  _XCT_testCase:method:didFinishActivity:
+			//  _XCT_testCaseDidStartForTestClass:method:
+			// fmt.Println("###### xcTestManager2 ### _Unregistered -->", m)
+		},
+	)
 
 	sessionId := uuid.NewV4()
 	if err = xcTestManager2.initiateSession(xcodeVersion, nskeyedarchiver.NewNSUUID(sessionId.Bytes())); err != nil {
@@ -736,13 +741,16 @@ func (d *device) XCTest(bundleID string, opts ...XCTestOption) (out <-chan strin
 		}
 	}
 
-	d.instruments.registerCallback("outputReceived:fromProcess:atTime:", func(m libimobiledevice.DTXMessageResult) {
-		// fmt.Println("###### instruments ### -->", m.Aux[0])
-		_out <- fmt.Sprintf("%s", m.Aux[0])
-	})
+	d.instruments.registerCallback(
+		"outputReceived:fromProcess:atTime:", func(m libimobiledevice.DTXMessageResult) {
+			// fmt.Println("###### instruments ### -->", m.Aux[0])
+			_out <- fmt.Sprintf("%s", m.Aux[0])
+		},
+	)
 
 	var pid int
-	if pid, err = d.instruments.AppLaunch(bundleID,
+	if pid, err = d.instruments.AppLaunch(
+		bundleID,
 		WithAppPath(appPath),
 		WithEnvironment(appEnv),
 		WithArguments(appArgs),
@@ -752,7 +760,7 @@ func (d *device) XCTest(bundleID string, opts ...XCTestOption) (out <-chan strin
 		return _out, cancelFunc, err
 	}
 
-	// see https://github.com/electricbubble/gidevice/issues/31
+	// see https://github.com/ktmdan/gidevice/issues/31
 	// if err = d.instruments.startObserving(pid); err != nil {
 	// 	return _out, cancelFunc, err
 	// }
@@ -769,9 +777,11 @@ func (d *device) XCTest(bundleID string, opts ...XCTestOption) (out <-chan strin
 	}
 
 	go func() {
-		d.instruments.registerCallback("_Golang-iDevice_Over", func(_ libimobiledevice.DTXMessageResult) {
-			cancelFunc()
-		})
+		d.instruments.registerCallback(
+			"_Golang-iDevice_Over", func(_ libimobiledevice.DTXMessageResult) {
+				cancelFunc()
+			},
+		)
 
 		<-ctx.Done()
 		tmSrv1.close()

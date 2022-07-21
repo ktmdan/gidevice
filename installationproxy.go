@@ -2,7 +2,8 @@ package giDevice
 
 import (
 	"fmt"
-	"github.com/electricbubble/gidevice/pkg/libimobiledevice"
+
+	"github.com/ktmdan/gidevice/pkg/libimobiledevice"
 )
 
 var _ InstallationProxy = (*installationProxy)(nil)

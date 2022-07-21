@@ -2,8 +2,9 @@ package giDevice
 
 import (
 	"fmt"
-	"github.com/electricbubble/gidevice/pkg/libimobiledevice"
 	"os"
+
+	"github.com/ktmdan/gidevice/pkg/libimobiledevice"
 )
 
 var _ ImageMounter = (*imageMounter)(nil)

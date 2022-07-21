@@ -5,12 +5,15 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/electricbubble/gidevice/pkg/nskeyedarchiver"
 	"io"
+	"log"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
 	"unsafe"
+
+	"github.com/electricbubble/gidevice/pkg/nskeyedarchiver"
 )
 
 const (
@@ -183,28 +186,36 @@ func (c *dtxMessageClient) ReceiveDTXMessage() (result *DTXMessageResult, err er
 	if r, l := payloadSize+payload.AuxiliaryLength, len(rawPayload); int(r) <= l {
 		aux = rawPayload[payloadSize:r]
 	} else {
-		debugLog(fmt.Sprintf("<-- DTXMessage %s\n%s\n"+
-			"[aux] bounds out of range [:%d] with capacity %d",
-			header.String(), payload.String(),
-			r, l,
-		))
+		debugLog(
+			fmt.Sprintf(
+				"<-- DTXMessage %s\n%s\n"+
+					"[aux] bounds out of range [:%d] with capacity %d",
+				header.String(), payload.String(),
+				r, l,
+			),
+		)
 	}
 	if r, l := objOffset+(payload.TotalLength-uint64(payload.AuxiliaryLength)), len(rawPayload); int(r) <= l {
 		obj = rawPayload[objOffset:r]
 	} else {
-		debugLog(fmt.Sprintf("<-- DTXMessage %s\n%s\n"+
-			"[obj] bounds out of range [:%d] with capacity %d",
-			header.String(), payload.String(),
-			r, l,
-		))
+		debugLog(
+			fmt.Sprintf(
+				"<-- DTXMessage %s\n%s\n"+
+					"[obj] bounds out of range [:%d] with capacity %d",
+				header.String(), payload.String(),
+				r, l,
+			),
+		)
 	}
 
-	debugLog(fmt.Sprintf(
-		"<-- DTXMessage %s\n%s\n"+
-			"%s\n%s\n",
-		header.String(), payload.String(),
-		hex.Dump(aux), hex.Dump(obj),
-	))
+	debugLog(
+		fmt.Sprintf(
+			"<-- DTXMessage %s\n%s\n"+
+				"%s\n%s\n",
+			header.String(), payload.String(),
+			hex.Dump(aux), hex.Dump(obj),
+		),
+	)
 
 	result = new(DTXMessageResult)
 
@@ -250,10 +261,12 @@ func (c *dtxMessageClient) ReceiveDTXMessage() (result *DTXMessageResult, err er
 
 func (c *dtxMessageClient) Connection() (publishedChannels map[string]int32, err error) {
 	args := NewAuxBuffer()
-	if err = args.AppendObject(map[string]interface{}{
-		"com.apple.private.DTXBlockCompression": uint64(2),
-		"com.apple.private.DTXConnection":       uint64(1),
-	}); err != nil {
+	if err = args.AppendObject(
+		map[string]interface{}{
+			"com.apple.private.DTXBlockCompression": uint64(2),
+			"com.apple.private.DTXConnection":       uint64(1),
+		},
+	); err != nil {
 		return nil, fmt.Errorf("connection DTXMessage: %w", err)
 	}
 
@@ -337,6 +350,13 @@ func (c *dtxMessageClient) Close() {
 
 func (c *dtxMessageClient) startReceive() {
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("!!!! PANIC in startReceive thread")
+				debug.SetTraceback("all")
+				debug.PrintStack()
+			}
+		}()
 		for {
 			select {
 			case <-c.ctx.Done():

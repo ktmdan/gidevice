@@ -36,9 +36,10 @@ func newDtxMessageClient(innerConn InnerConn, mctx context.Context) *dtxMessageC
 	}
 	c.RegisterCallback(_unregistered, func(m DTXMessageResult) {})
 	c.RegisterCallback(_over, func(m DTXMessageResult) {})
+	c.ctx, c.cancelFunc = context.WithCancel(mctx)
 	c.startReceive()
 	c.startWaitingForReply()
-	c.ctx, c.cancelFunc = context.WithCancel(mctx)
+
 	return c
 }
 

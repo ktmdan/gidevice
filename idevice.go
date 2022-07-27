@@ -45,12 +45,12 @@ type Device interface {
 	InstallationProxyBrowse(opts ...InstallationProxyOption) (currentList []interface{}, err error)
 	InstallationProxyLookup(opts ...InstallationProxyOption) (lookupResult interface{}, err error)
 
-	instrumentsService() (instruments Instruments, err error)
+	instrumentsService(mctx context.Context) (instruments Instruments, err error)
 	AppLaunch(bundleID string, opts ...AppLaunchOption) (pid int, err error)
 	AppKill(pid int) (err error)
 	AppRunningProcesses() (processes []Process, err error)
 	AppList(opts ...AppListOption) (apps []Application, err error)
-	DeviceInfo() (devInfo *DeviceInfo, err error)
+	DeviceInfo(mctx context.Context) (devInfo *DeviceInfo, err error)
 
 	AfcService() (afc Afc, err error)
 	AppInstall(ipaPath string) (err error)
@@ -100,7 +100,7 @@ type Lockdown interface {
 	ScreenshotService() (screenshot Screenshot, err error)
 	SimulateLocationService() (simulateLocation SimulateLocation, err error)
 	InstallationProxyService() (installationProxy InstallationProxy, err error)
-	InstrumentsService() (instruments Instruments, err error)
+	InstrumentsService(mctx context.Context) (instruments Instruments, err error)
 	TestmanagerdService() (testmanagerd Testmanagerd, err error)
 	AfcService() (afc Afc, err error)
 	HouseArrestService() (houseArrest HouseArrest, err error)

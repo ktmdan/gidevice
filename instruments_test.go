@@ -1,6 +1,7 @@
 package giDevice
 
 import (
+	"context"
 	"testing"
 )
 
@@ -15,7 +16,7 @@ func setupInstrumentsSrv(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if instrumentsSrv, err = lockdownSrv.InstrumentsService(); err != nil {
+	if instrumentsSrv, err = lockdownSrv.InstrumentsService(context.TODO()); err != nil {
 		t.Fatal(err)
 	}
 }

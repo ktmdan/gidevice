@@ -316,14 +316,14 @@ func (d *device) InstallationProxyLookup(opts ...InstallationProxyOption) (looku
 	return d.installationProxy.Lookup(opts...)
 }
 
-func (d *device) instrumentsService() (instruments Instruments, err error) {
+func (d *device) instrumentsService(mctx context.Context) (instruments Instruments, err error) {
 	if d.instruments != nil {
 		return d.instruments, nil
 	}
 	if _, err = d.lockdownService(); err != nil {
 		return nil, err
 	}
-	if d.instruments, err = d.lockdown.InstrumentsService(); err != nil {
+	if d.instruments, err = d.lockdown.InstrumentsService(mctx); err != nil {
 		return nil, err
 	}
 	instruments = d.instruments
@@ -331,35 +331,35 @@ func (d *device) instrumentsService() (instruments Instruments, err error) {
 }
 
 func (d *device) AppLaunch(bundleID string, opts ...AppLaunchOption) (pid int, err error) {
-	if _, err = d.instrumentsService(); err != nil {
+	if _, err = d.instrumentsService(context.TODO()); err != nil {
 		return 0, err
 	}
 	return d.instruments.AppLaunch(bundleID, opts...)
 }
 
 func (d *device) AppKill(pid int) (err error) {
-	if _, err = d.instrumentsService(); err != nil {
+	if _, err = d.instrumentsService(context.TODO()); err != nil {
 		return err
 	}
 	return d.instruments.AppKill(pid)
 }
 
 func (d *device) AppRunningProcesses() (processes []Process, err error) {
-	if _, err = d.instrumentsService(); err != nil {
+	if _, err = d.instrumentsService(context.TODO()); err != nil {
 		return nil, err
 	}
 	return d.instruments.AppRunningProcesses()
 }
 
 func (d *device) AppList(opts ...AppListOption) (apps []Application, err error) {
-	if _, err = d.instrumentsService(); err != nil {
+	if _, err = d.instrumentsService(context.TODO()); err != nil {
 		return nil, err
 	}
 	return d.instruments.AppList(opts...)
 }
 
-func (d *device) DeviceInfo() (devInfo *DeviceInfo, err error) {
-	if _, err = d.instrumentsService(); err != nil {
+func (d *device) DeviceInfo(mctx context.Context) (devInfo *DeviceInfo, err error) {
+	if _, err = d.instrumentsService(mctx); err != nil {
 		return nil, err
 	}
 	return d.instruments.DeviceInfo()
@@ -686,7 +686,7 @@ func (d *device) XCTest(bundleID string, opts ...XCTestOption) (out <-chan strin
 		return _out, cancelFunc, err
 	}
 
-	if _, err = d.instrumentsService(); err != nil {
+	if _, err = d.instrumentsService(context.TODO()); err != nil {
 		return _out, cancelFunc, err
 	}
 

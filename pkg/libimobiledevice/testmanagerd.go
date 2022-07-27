@@ -1,5 +1,7 @@
 package libimobiledevice
 
+import "context"
+
 const (
 	TestmanagerdSecureServiceName = "com.apple.testmanagerd.lockdown.secure"
 	TestmanagerdServiceName       = "com.apple.testmanagerd.lockdown"
@@ -7,7 +9,7 @@ const (
 
 func NewTestmanagerdClient(innerConn InnerConn) *TestmanagerdClient {
 	return &TestmanagerdClient{
-		client: newDtxMessageClient(innerConn),
+		client: newDtxMessageClient(innerConn, context.TODO()),
 	}
 }
 

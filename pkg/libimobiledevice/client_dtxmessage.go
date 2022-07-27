@@ -21,7 +21,7 @@ const (
 	_over         = "_Golang-iDevice_Over"
 )
 
-func newDtxMessageClient(innerConn InnerConn) *dtxMessageClient {
+func newDtxMessageClient(innerConn InnerConn, mctx context.Context) *dtxMessageClient {
 	c := &dtxMessageClient{
 		innerConn:         innerConn,
 		msgID:             0,
@@ -38,7 +38,7 @@ func newDtxMessageClient(innerConn InnerConn) *dtxMessageClient {
 	c.RegisterCallback(_over, func(m DTXMessageResult) {})
 	c.startReceive()
 	c.startWaitingForReply()
-	c.ctx, c.cancelFunc = context.WithCancel(context.TODO())
+	c.ctx, c.cancelFunc = context.WithCancel(mctx)
 	return c
 }
 
@@ -352,7 +352,7 @@ func (c *dtxMessageClient) startReceive() {
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
-				log.Printf("!!!! PANIC in startReceive thread")
+				log.Printf("!!!! PANIC in startReceive thread %v", r)
 				debug.SetTraceback("all")
 				debug.PrintStack()
 			}

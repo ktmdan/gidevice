@@ -2,6 +2,7 @@ package giDevice
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha1"
@@ -371,7 +372,7 @@ func (c *lockdown) InstallationProxyService() (installationProxy InstallationPro
 	return
 }
 
-func (c *lockdown) InstrumentsService() (instruments Instruments, err error) {
+func (c *lockdown) InstrumentsService(mctx context.Context) (instruments Instruments, err error) {
 	service := libimobiledevice.InstrumentsServiceName
 	if DeviceVersion(c.iOSVersion...) >= DeviceVersion(14, 0, 0) {
 		service = libimobiledevice.InstrumentsSecureProxyServiceName
@@ -381,7 +382,7 @@ func (c *lockdown) InstrumentsService() (instruments Instruments, err error) {
 	if innerConn, err = c._startService(service, nil); err != nil {
 		return nil, err
 	}
-	instrumentsClient := libimobiledevice.NewInstrumentsClient(innerConn)
+	instrumentsClient := libimobiledevice.NewInstrumentsClient(innerConn, mctx)
 	instruments = newInstruments(instrumentsClient)
 
 	if service == libimobiledevice.InstrumentsServiceName {

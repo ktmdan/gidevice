@@ -1,13 +1,15 @@
 package libimobiledevice
 
+import "context"
+
 const (
 	InstrumentsServiceName            = "com.apple.instruments.remoteserver"
 	InstrumentsSecureProxyServiceName = "com.apple.instruments.remoteserver.DVTSecureSocketProxy"
 )
 
-func NewInstrumentsClient(innerConn InnerConn) *InstrumentsClient {
+func NewInstrumentsClient(innerConn InnerConn, mctx context.Context) *InstrumentsClient {
 	return &InstrumentsClient{
-		client: newDtxMessageClient(innerConn),
+		client: newDtxMessageClient(innerConn, mctx),
 	}
 }
 
